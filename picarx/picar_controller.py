@@ -7,14 +7,14 @@ def move_forward(car, speed=50, angle=0):
 
 def move_backward(car, speed=50, angle=0):
     car.set_dir_servo_angle(angle)
-    car.backard(speed)
+    car.backward(speed)
 
 def parallel_right(car, speed=50, angle=30):
     car.set_dir_servo_angle(angle)
-    car.backard(speed)
+    car.backward(speed)
     time.sleep(2)
     car.set_dir_servo_angle(-angle)
-    car.backard(speed)
+    car.backward(speed)
     time.sleep(2)
     car.set_dir_servo_angle(0)
     car.forward(speed)
@@ -23,10 +23,10 @@ def parallel_right(car, speed=50, angle=30):
 
 def parallel_left(car, speed=50, angle=30):
     car.set_dir_servo_angle(-angle)
-    car.backard(speed)
+    car.backward(speed)
     time.sleep(2)
     car.set_dir_servo_angle(angle)
-    car.backard(speed)
+    car.backward(speed)
     time.sleep(2)
     car.set_dir_servo_angle(0)
     car.forward(speed)
@@ -37,7 +37,7 @@ def k_right(car, speed=50, angle=30):
     car.forward(speed)
     time.sleep(2)
     car.set_dir_servo_angle(-angle)
-    car.backard(speed)
+    car.backward(speed)
     time.sleep(2)
     car.set_dir_servo_angle(angle)
     car.forward(speed)
@@ -51,7 +51,7 @@ def k_left(car, speed=50, angle=30):
     car.forward(speed)
     time.sleep(2)
     car.set_dir_servo_angle(angle)
-    car.backard(speed)
+    car.backward(speed)
     time.sleep(2)
     car.set_dir_servo_angle(-angle)
     car.forward(speed)
