@@ -1,11 +1,11 @@
 from picarx_improved import Picarx
 import time
 
-def move_forward(car, speed, angle=0):
+def move_forward(car, speed=50, angle=0):
     car.set_dir_servo_angle(angle)
     car.forward(speed)
 
-def move_backward(car, speed, angle=0):
+def move_backward(car, speed=50, angle=0):
     car.set_dir_servo_angle(angle)
     car.backard(speed)
 
@@ -63,7 +63,7 @@ def k_left(car, speed=50, angle=30):
 if __name__ == "__main__":
     car = Picarx()
 
-    maneuver = input("Choose a manuever")
+    maneuver = input("Choose a manuever: ")
 
     if maneuver == "move forward":
         move_forward(car)
