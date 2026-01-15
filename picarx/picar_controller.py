@@ -12,10 +12,10 @@ def move_backward(car, speed=50, angle=0):
 def parallel_right(car, speed=50, angle=30):
     car.set_dir_servo_angle(angle)
     car.backward(speed)
-    time.sleep(1)
+    time.sleep(5)
     car.set_dir_servo_angle(-angle)
     car.backward(speed)
-    time.sleep(1)
+    time.sleep(5)
     car.set_dir_servo_angle(0)
     car.forward(speed)
     time.sleep(1)
