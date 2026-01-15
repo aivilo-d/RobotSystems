@@ -25,7 +25,7 @@ except ImportError:
 
 import time
 import atexit
-import numpy as np
+import math
 
 
 def constrain(x, min_val, max_val):
@@ -215,12 +215,12 @@ class Picarx(object):
     def ackerman_steering(self, speed):
         v_inner = speed
         v_outer = speed
-        current_angle = self.dir_current_angle
+        current_angle = math.radians(self.dir_current_angle)
         length_car = 94.24 #mm
         track_width = 117.1 #mm
 
         if current_angle != 0:
-            r_center = length_car/ np.tan(current_angle)
+            r_center = length_car/ math.tan(current_angle)
             w_car = speed / r_center
             v_inner = w_car * (r_center - track_width/2)
             v_outer = w_car * (r_center + track_width/2)
@@ -239,11 +239,11 @@ class Picarx(object):
             #power_scale = (100 - abs_current_angle) / 100.0 
             v_inner, v_outer = self.ackerman_steering(speed)
             if (current_angle / abs_current_angle) > 0:
+                self.set_motor_speed(1, -v_outer)
+                self.set_motor_speed(2, v_inner)
+            else:
                 self.set_motor_speed(1, -v_inner)
                 self.set_motor_speed(2, v_outer)
-            else:
-                self.set_motor_speed(1, -v_outer)
-                self.set_motor_speed(2, v_inner )
         else:
             self.set_motor_speed(1, -1*speed)
             self.set_motor_speed(2, speed)  
@@ -260,11 +260,11 @@ class Picarx(object):
             #power_scale = (100 - abs_current_angle) / 100.0
             v_inner, v_outer = self.ackerman_steering(speed)
             if (current_angle / abs_current_angle) > 0:
-                self.set_motor_speed(1, v_inner)
-                self.set_motor_speed(2, -v_outer) 
-            else:
                 self.set_motor_speed(1, v_outer)
-                self.set_motor_speed(2, -v_inner)
+                self.set_motor_speed(2, -v_inner) 
+            else:
+                self.set_motor_speed(1, v_inner)
+                self.set_motor_speed(2, -v_outer)
         else:
             self.set_motor_speed(1, speed)
             self.set_motor_speed(2, -1*speed)                  
@@ -326,6 +326,9 @@ class Picarx(object):
 
 if __name__ == "__main__":
     px = Picarx()
+    px.set_dir_servo_angle(30)
     px.forward(50)
+    time.sleep(1)
+    px.backward(50)
     time.sleep(1)
     px.stop()
