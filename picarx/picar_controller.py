@@ -4,10 +4,12 @@ import time
 def move_forward(car, speed=50, angle=0):
     car.set_dir_servo_angle(angle)
     car.forward(speed)
+    time.sleep(2)
 
 def move_backward(car, speed=50, angle=0):
     car.set_dir_servo_angle(angle)
     car.backward(speed)
+    time.sleep(2)
 
 def parallel_right(car, speed=50, angle=30):
     car.set_dir_servo_angle(angle)
@@ -18,6 +20,7 @@ def parallel_right(car, speed=50, angle=30):
     time.sleep(1)
     car.set_dir_servo_angle(0)
     car.forward(speed)
+    time.sleep(.25)
 
 
 def parallel_left(car, speed=50, angle=30):
@@ -29,6 +32,7 @@ def parallel_left(car, speed=50, angle=30):
     time.sleep(1)
     car.set_dir_servo_angle(0)
     car.forward(speed)
+    time.sleep(.25)
 
 def k_right(car, speed=50, angle=30):
     car.set_dir_servo_angle(angle)
@@ -74,5 +78,4 @@ if __name__ == "__main__":
     if maneuver == "k left":
         k_left(car)
 
-    time.sleep(2)
     car.stop()
