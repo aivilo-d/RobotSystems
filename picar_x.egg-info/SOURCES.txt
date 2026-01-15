@@ -12,6 +12,7 @@ picarx/led.py
 picarx/llm.py
 picarx/music.py
 picarx/picarx.py
+picarx/picarx_improved.py
 picarx/preset_actions.py
 picarx/stt.py
 picarx/tts.py
