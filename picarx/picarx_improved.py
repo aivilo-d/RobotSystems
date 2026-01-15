@@ -215,7 +215,7 @@ class Picarx(object):
     def ackerman_steering(self, speed):
         v_inner = speed
         v_outer = speed
-        current_angle = math.radians(self.dir_current_angle)
+        current_angle = math.radians(abs(self.dir_current_angle))
         length_car = 94.24 #mm
         track_width = 117.1 #mm
 
