@@ -69,10 +69,10 @@ if __name__ == "__main__":
 
     if maneuver == "move forward":
         angle = int(input("Enter Angle: "))
-        move_forward(car, angle)
+        move_forward(car,50, angle)
     if maneuver == "move backward":
         angle = int(input("Enter Angle: "))
-        move_backward(car, angle)
+        move_backward(car, 50, angle)
     if maneuver == "parallel right":
         parallel_right(car)
     if maneuver == "parallel left":
