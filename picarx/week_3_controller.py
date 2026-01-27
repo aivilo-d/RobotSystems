@@ -3,9 +3,9 @@ import time
 
 class Sensor(object):
 
-    def __init__(self, pins, sensor):
-        self.pins = pins
+    def __init__(self, sensor):
         self.sensor = sensor
+        self.pins = self.sensor.pins
         self.sensor_reading = None
     
     def read(self):
@@ -61,7 +61,7 @@ class Controller(object):
         
 if __name__ == "__main__":
     car = Picarx()
-    sensor = Sensor()
+    sensor = Sensor(car.grayscale)
     interpreter = Interpreter()
     controller = Controller()
 
