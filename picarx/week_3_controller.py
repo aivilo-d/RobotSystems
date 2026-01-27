@@ -69,5 +69,6 @@ if __name__ == "__main__":
         sensor.read()
         interpreter.process(sensor.sensor_reading)
         controller.control(interpreter.relative_position)
+        time.sleep(.25)
 
     car.stop()
