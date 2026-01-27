@@ -57,6 +57,7 @@ class Controller(object):
         angle = relative_position * 30 * self.scaling_factor
         car.set_dir_servo_angle(angle)
         car.forward(50)
+        return angle
 
         
 if __name__ == "__main__":
