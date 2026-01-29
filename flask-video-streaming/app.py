@@ -34,4 +34,4 @@ def video_feed():
 
 
 if __name__ == '__main__':
-    app.run(host='9000', debug=True, threaded=True)
+    app.run(port='5000', debug=True, threaded=True)
