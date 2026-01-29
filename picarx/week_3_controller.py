@@ -54,9 +54,9 @@ class Controller(object):
         self.scaling_factor = scaling_factor
     
     def control(self, relative_position):
-        angle = relative_position * 30 * self.scaling_factor
+        angle = relative_position * 70 * self.scaling_factor
         car.set_dir_servo_angle(angle)
-        car.forward(50)
+        car.forward(30)
         return angle
 
         
@@ -70,6 +70,6 @@ if __name__ == "__main__":
         sensor.read()
         interpreter.process(sensor.sensor_reading)
         controller.control(interpreter.relative_position)
-        time.sleep(.25)
+        time.sleep(.05)
 
     car.stop()
