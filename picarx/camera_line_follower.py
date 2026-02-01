@@ -21,11 +21,11 @@ class Sensor(object):
         
     def find_target(self, T=127):
         im = self.cam.capture_array()
-        gray_im = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
+        im = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
         if self.polarity == 0:
-            im = cv2.bitwise_not(gray_im) #invert the image to make the line light instead of dark
-        ret, thresh = cv2.threshold(im, T, 255, cv2.THRESH_BINARY)
-        im2, cnts, hierarchy = cv2.findContours(thresh, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
+            im = cv2.bitwise_not(im) #invert the image to make the line light instead of dark
+        ret, thresh = cv2.threshold(im, T, 255, 0)
+        cnts, hierarchy = cv2.findContours(thresh, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
         C = None
         if cnts is not None and len(cnts) > 0:
             C = max(cnts, key = cv2.contourArea)
@@ -44,7 +44,7 @@ class Interpreter(object):
         self.relative_position = None
     
     def process(self, target):
-        self.relative_positon = (target - 640) / 640
+        self.relative_position = (target - 640) / 640
         return self.relative_position
             
 class Controller(object):
@@ -64,6 +64,7 @@ if __name__ == "__main__":
     camera = Sensor(picam2)
     interpreter = Interpreter()
     controller = Controller()
+    car.set_cam_tilt_angle(-45)
 
     while 1==1:
         camera.find_target()
