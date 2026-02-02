@@ -2,7 +2,7 @@ from time import sleep
 from picarx_improved import Picarx
 import cv2
 from picamera2 import Picamera2
-from concurrent.futures import ThreadPoolExecuter
+from concurrent.futures import ThreadPoolExecutor
 from threading import Event
 from readerwriterlock import rwlock
 
@@ -81,7 +81,7 @@ if __name__ == "__main__":
     car.set_cam_tilt_angle(-45)
 
     futures = []
-    with ThreadPoolExecuter(max_workers=3) as executor:
+    with ThreadPoolExecutor(max_workers=3) as executor:
         for i in range(3):
             #Spawn task threads
             eSensor = executor.submit(sensor_function, picam2, sensor_bus, .05)
