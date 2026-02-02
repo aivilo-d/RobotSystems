@@ -60,9 +60,9 @@ def control_function(car, interpretor_bus, control_delay):
     
 class Buss(object):
     
-    def __init__(self):
+    def __init__(self, message):
         self.lock = rwlock.RWLockWriteD()
-        self.message = None
+        self.message = message
     
     def write(self, message):
         with self.lock.gen_wlock():
@@ -76,8 +76,8 @@ class Buss(object):
         
 if __name__ == "__main__":
     car = Picarx()
-    sensor_bus = Buss()
-    interpretor_bus = Buss()
+    sensor_bus = Buss(640)
+    interpretor_bus = Buss(0)
     car.set_cam_tilt_angle(-45)
 
     futures = []
