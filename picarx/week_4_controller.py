@@ -24,24 +24,37 @@ def handle_exception(future):
 
 def sensor_function(picam2, sensor_bus, sensor_delay):
     while not shutdown_event.is_set():
+        print("run sense")
         im = picam2.capture_array()
+        print("take picture")
+        im = im[700:720, 0:1280]
+        print("crop picture")
         im = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
+        print("grayscale")
         im = cv2.bitwise_not(im) #invert the image to make the line light instead of dark
-        ret, thresh = cv2.threshold(im, 127, 255, 0)
+        print("invert")
+        ret, thresh = cv2.threshold(im, 127, 255, cv2.THRESH_BINARY)
+        print("threshold")
         cnts, hierarchy = cv2.findContours(thresh, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
+        print("contours")
         C = None
         if cnts is not None and len(cnts) > 0:
             C = max(cnts, key = cv2.contourArea)
+        print("found C")
         if C is None:
-            return None, None
+            print("C is NONE")
+            continue
         M = cv2.moments(C)
-        cx = int(M['m10']/M['m00'])
-        sensor_bus.write(cx)
+        if M['m00'] != 0:
+            cx = int(M['m10']/M['m00'])
+            sensor_bus.write(cx)
+            print("cx")
         sleep(sensor_delay)
     raise Exception('Sensor raised an excpetion')
 
 def interpretor_function(sensor_bus, interpretor_bus, interpretor_delay):
     while not shutdown_event.is_set():
+        print("run interpret")
         target = sensor_bus.read()
         relative_position = (target - 640) / 640
         interpretor_bus.write(relative_position)
@@ -50,6 +63,7 @@ def interpretor_function(sensor_bus, interpretor_bus, interpretor_delay):
 
 def control_function(car, interpretor_bus, control_delay):
     while not shutdown_event.is_set():
+        print("run control")
         relative_position = interpretor_bus.read()
         angle = relative_position * 70
         car.set_dir_servo_angle(angle)
