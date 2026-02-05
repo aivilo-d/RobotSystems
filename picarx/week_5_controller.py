@@ -14,7 +14,9 @@ picam2.preview_configuration.align()
 picam2.configure("preview")
 picam2.start()
 
-def sensor_function(picam2, sensor_bus, sensor_delay):
+car = Picarx()
+
+def sensor_function():
     print("run sense")
     im = picam2.capture_array()
     im = im[700:720, 0:1280]
@@ -29,38 +31,35 @@ def sensor_function(picam2, sensor_bus, sensor_delay):
         M = cv2.moments(C)
         if M['m00'] != 0:
             cx = int(M['m10']/M['m00'])
-            sensor_bus.write(cx)
-        sleep(sensor_delay)
+            return cx
     else:
         print("C is NONE")
 
-def interpretor_function(sensor_bus, interpretor_bus, interpretor_delay):
+def interpretor_function(cx):
     print("run interpret")
-    target = sensor_bus.read()
-    relative_position = (target - 640) / 640
-    interpretor_bus.write(relative_position)
-    sleep(interpretor_delay)
+    relative_position = (cx - 640) / 640
+    return relative_position
 
-def control_function(car, interpretor_bus, control_delay):
+def control_function(relative_position):
     print("run control")
-    relative_position = interpretor_bus.read()
     angle = relative_position * 70
     car.set_dir_servo_angle(angle)
     car.forward(30)
-    sleep(control_delay)
     
         
 if __name__ == "__main__":
     
-    car = Picarx()
+    consumer_producer_list = []
+
     termination_bus = rossros.Bus(initial_message=0, name="Termination Bus")
+    sensor_bus = rossros.Bus(640,"Sensor Bus")
+    interpretor_bus = rossros.Bus(0,"Interpretor Bus")
+
     timer = rossros.Timer(termination_bus,  # buses that receive the countdown value
                  duration=5,  # how many seconds the timer should run for (0 is forever)
                  delay=0,  # how many seconds to sleep for between checking time
                  termination_buses=termination_bus,
                  name="termination timer")
-    sensor_bus = rossros.Bus(640,"Sensor Bus")
-    interpretor_bus = rossros.Bus(0,"Interpretor Bus")
     sensor = rossros.Producer(sensor_function, sensor_bus, .05, termination_bus,"Sensor")
     interpretor = rossros.ConsumerProducer(interpretor_function, sensor_bus, interpretor_bus, .05, termination_bus, "Interpretor")
     controller = rossros.Consumer(control_function, interpretor_bus, .05, termination_bus,"Controller")
