@@ -16,7 +16,7 @@ picam2.start()
 
 car = Picarx()
 
-def sensor_function():
+def camera_function():
     print("run sense")
     im = picam2.capture_array()
     im = im[700:720, 0:1280]
@@ -35,16 +35,39 @@ def sensor_function():
     else:
         print("C is NONE")
 
-def interpretor_function(cx):
+def ultrasonic_function():
+    reading = car.ultrasonic.read()
+    return reading
+
+def camera_interpretor_function(cx):
     print("run interpret")
     relative_position = (cx - 640) / 640
     return relative_position
 
-def control_function(relative_position):
+def ultrasonic_interpretor_function(reading):
+    if reading == -1:
+        return  0 #this stops the car
+    if reading == -2:
+        return 0 #this stops the car
+    if reading < 5:
+        return 0
+    else:
+        return 1
+
+def camera_only_control(relative_position):
     print("run control")
     angle = relative_position * 70
     car.set_dir_servo_angle(angle)
     car.forward(30)
+
+def control_function(relative_position, distance):
+    if distance == 0:
+       car.forward(0) 
+    else:
+        angle = relative_position * 70
+        car.set_dir_servo_angle(angle)
+        car.forward(30)
+    
     
         
 if __name__ == "__main__":
@@ -52,18 +75,27 @@ if __name__ == "__main__":
     consumer_producer_list = []
 
     termination_bus = rossros.Bus(initial_message=0, name="Termination Bus")
-    sensor_bus = rossros.Bus(640,"Sensor Bus")
-    interpretor_bus = rossros.Bus(0,"Interpretor Bus")
+    camera_bus = rossros.Bus(640,"Camera Bus")
+    camera_interpretor_bus = rossros.Bus(0,"Camera Interpretor Bus")
+    
+    #ultrasonic_bus = rossros.Bus(640,"Ultrasonic Bus")
+    #ultrasonic_interpretor_bus = rossros.Bus(0,"Ultrasonic Interpretor Bus")
 
     timer = rossros.Timer(termination_bus,  # buses that receive the countdown value
                  duration=5,  # how many seconds the timer should run for (0 is forever)
                  delay=0,  # how many seconds to sleep for between checking time
                  termination_buses=termination_bus,
                  name="termination timer")
-    sensor = rossros.Producer(sensor_function, sensor_bus, .05, termination_bus,"Sensor")
-    interpretor = rossros.ConsumerProducer(interpretor_function, sensor_bus, interpretor_bus, .05, termination_bus, "Interpretor")
-    controller = rossros.Consumer(control_function, interpretor_bus, .05, termination_bus,"Controller")
-    consumer_producer_list = ([timer, sensor, interpretor, controller])
+    camera_sensor = rossros.Producer(camera_function, camera_bus, .05, termination_bus,"Camera Sensor")
+    camera_interpretor = rossros.ConsumerProducer(camera_interpretor_function, camera_bus, camera_interpretor_bus, .05, termination_bus, "Camera Interpretor")
+    camera_controller = rossros.Consumer(camera_only_control, camera_interpretor_bus, .05, termination_bus,"Camera Controller")
+   
+    #ultrasonic_sensor = rossros.Producer(ultrasonic_function, ultrasonic_bus, .05, termination_bus,"Ultrasonic Sensor")
+    #ultrasonic_interpretor = rossros.ConsumerProducer(ultrasonic_interpretor_function, ultrasonic_bus, ultrasonic_interpretor_bus, .05, termination_bus, "Ultrasonic Interpretor")
+    #controller = rossros.Consumer(control_function, (camera_interpretor_bus, ultrasonic_interpretor_bus), .05, termination_bus,"Controller")
+    
+    consumer_producer_list = ([timer, camera_sensor, camera_interpretor, camera_controller])
+    #consumer_producer_list = ([timer, camera_sensor, ultrasonic_sensor, camera_interpretor, ultrasonic_interpretor, controller])
 
     car.set_cam_tilt_angle(-45)
 
