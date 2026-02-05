@@ -27,7 +27,7 @@ def camera_function():
     C = None
     if cnts is not None and len(cnts) > 0:
         C = max(cnts, key = cv2.contourArea)
-    if C:
+    if C is not None:
         M = cv2.moments(C)
         if M['m00'] != 0:
             cx = int(M['m10']/M['m00'])
@@ -41,14 +41,14 @@ def ultrasonic_function():
 
 def camera_interpretor_function(cx):
     print("run interpret")
-    relative_position = (cx - 640) / 640
+    relative_position = (cx - 640) / 640 #this keeps erroring because cx is None I think
     return relative_position
 
 def ultrasonic_interpretor_function(reading):
     if reading == -1:
-        return  0 #this stops the car
+        return  1 #this keeps driving but should just continue same behaviour
     if reading == -2:
-        return 0 #this stops the car
+        return 1 #this keeps driving but should just continue same behaviour
     if reading < 5:
         return 0
     else:
@@ -78,8 +78,8 @@ if __name__ == "__main__":
     camera_bus = rossros.Bus(640,"Camera Bus")
     camera_interpretor_bus = rossros.Bus(0,"Camera Interpretor Bus")
     
-    #ultrasonic_bus = rossros.Bus(640,"Ultrasonic Bus")
-    #ultrasonic_interpretor_bus = rossros.Bus(0,"Ultrasonic Interpretor Bus")
+    ultrasonic_bus = rossros.Bus(640,"Ultrasonic Bus")
+    ultrasonic_interpretor_bus = rossros.Bus(0,"Ultrasonic Interpretor Bus")
 
     timer = rossros.Timer(termination_bus,  # buses that receive the countdown value
                  duration=5,  # how many seconds the timer should run for (0 is forever)
@@ -88,14 +88,14 @@ if __name__ == "__main__":
                  name="termination timer")
     camera_sensor = rossros.Producer(camera_function, camera_bus, .05, termination_bus,"Camera Sensor")
     camera_interpretor = rossros.ConsumerProducer(camera_interpretor_function, camera_bus, camera_interpretor_bus, .05, termination_bus, "Camera Interpretor")
-    camera_controller = rossros.Consumer(camera_only_control, camera_interpretor_bus, .05, termination_bus,"Camera Controller")
+    #camera_controller = rossros.Consumer(camera_only_control, camera_interpretor_bus, .05, termination_bus,"Camera Controller")
    
-    #ultrasonic_sensor = rossros.Producer(ultrasonic_function, ultrasonic_bus, .05, termination_bus,"Ultrasonic Sensor")
-    #ultrasonic_interpretor = rossros.ConsumerProducer(ultrasonic_interpretor_function, ultrasonic_bus, ultrasonic_interpretor_bus, .05, termination_bus, "Ultrasonic Interpretor")
-    #controller = rossros.Consumer(control_function, (camera_interpretor_bus, ultrasonic_interpretor_bus), .05, termination_bus,"Controller")
+    ultrasonic_sensor = rossros.Producer(ultrasonic_function, ultrasonic_bus, .05, termination_bus,"Ultrasonic Sensor")
+    ultrasonic_interpretor = rossros.ConsumerProducer(ultrasonic_interpretor_function, ultrasonic_bus, ultrasonic_interpretor_bus, .05, termination_bus, "Ultrasonic Interpretor")
+    controller = rossros.Consumer(control_function, (camera_interpretor_bus, ultrasonic_interpretor_bus), .05, termination_bus,"Controller")
     
-    consumer_producer_list = ([timer, camera_sensor, camera_interpretor, camera_controller])
-    #consumer_producer_list = ([timer, camera_sensor, ultrasonic_sensor, camera_interpretor, ultrasonic_interpretor, controller])
+    #consumer_producer_list = ([timer, camera_sensor, camera_interpretor, camera_controller])
+    consumer_producer_list = ([timer, camera_sensor, ultrasonic_sensor, camera_interpretor, ultrasonic_interpretor, controller])
 
     car.set_cam_tilt_angle(-45)
 
