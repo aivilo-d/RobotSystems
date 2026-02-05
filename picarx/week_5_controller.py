@@ -52,8 +52,6 @@ def control_function(car, interpretor_bus, control_delay):
         
 if __name__ == "__main__":
     
-    consumer_producer_list = []
-
     car = Picarx()
     termination_bus = rossros.Bus(initial_message=0, name="Termination Bus")
     timer = rossros.Timer(termination_bus,  # buses that receive the countdown value
@@ -66,7 +64,7 @@ if __name__ == "__main__":
     sensor = rossros.Producer(sensor_function, sensor_bus, .05, termination_bus,"Sensor")
     interpretor = rossros.ConsumerProducer(interpretor_function, sensor_bus, interpretor_bus, .05, termination_bus, "Interpretor")
     controller = rossros.Consumer(control_function, interpretor_bus, .05, termination_bus,"Controller")
-    consumer_producer_list.append(timer, sensor, interpretor, controller)
+    consumer_producer_list = ([timer, sensor, interpretor, controller])
 
     car.set_cam_tilt_angle(-45)
 
