@@ -41,8 +41,9 @@ def ultrasonic_function():
 
 def camera_interpretor_function(cx):
     print("run interpret")
-    relative_position = (cx - 640) / 640 #this keeps erroring because cx is None I think
-    return relative_position
+    if cx is not None:
+        relative_position = (cx - 640) / 640 #this keeps erroring because cx is None I think
+        return relative_position
 
 def ultrasonic_interpretor_function(reading):
     if reading == -1:
@@ -63,7 +64,7 @@ def camera_only_control(relative_position):
 def control_function(relative_position, distance):
     if distance == 0:
        car.forward(0) 
-    else:
+    elif relative_position is not None:
         angle = relative_position * 70
         car.set_dir_servo_angle(angle)
         car.forward(30)
@@ -82,7 +83,7 @@ if __name__ == "__main__":
     ultrasonic_interpretor_bus = rossros.Bus(0,"Ultrasonic Interpretor Bus")
 
     timer = rossros.Timer(termination_bus,  # buses that receive the countdown value
-                 duration=5,  # how many seconds the timer should run for (0 is forever)
+                 duration=10,  # how many seconds the timer should run for (0 is forever)
                  delay=0,  # how many seconds to sleep for between checking time
                  termination_buses=termination_bus,
                  name="termination timer")
