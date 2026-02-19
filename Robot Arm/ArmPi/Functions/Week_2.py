@@ -11,7 +11,7 @@ from ArmIK.Transform import *
 
 class Tracker():
     
-    def __init__(self, camera, target_color = 'red', size = (640, 480)):
+    def __init__(self, camera, target_color = ('red', 'green', 'blue'), size = (640, 480)):
         self.target_color = target_color
         self.camera = camera
         self.size = size
@@ -55,17 +55,21 @@ class Tracker():
         return frame_lab
 
     def find_contours(self, frame_lab):
-        areaMaxContour = 0
-        area_max = 0
+        areaMaxContour_max = 0
+        max_area = 0
         for i in self.color_range:
             if i in self.target_color:
-                self.detected_color = i
                 frame_mask = cv2.inRange(frame_lab, self.color_range[self.detected_color][0], self.color_range[self.detected_color][1])  #perform bitwise operations on original image and mask
                 opened = cv2.morphologyEx(frame_mask, cv2.MORPH_OPEN, np.ones((6, 6), np.uint8))  #opening operation
                 closed = cv2.morphologyEx(opened, cv2.MORPH_CLOSE, np.ones((6, 6), np.uint8))  #closing operation
                 contours = cv2.findContours(closed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)[-2]  #find the outline
-                areaMaxContour, area_max = self.getAreaMaxContour(contours) 
-                return areaMaxContour, area_max
+                areaMaxContour, area_max = self.getAreaMaxContour(contours)
+                if areaMaxContour is not None:
+                    if area_max > max_area:#找最大面积 find the largest area
+                        max_area = area_max
+                        self. detected_color = i
+                        areaMaxContour_max = areaMaxContour 
+                return areaMaxContour_max, max_area
     
     def find_block(self, img, areaMaxContour, area_max):
         if area_max > 2500:  #the largest area was found
