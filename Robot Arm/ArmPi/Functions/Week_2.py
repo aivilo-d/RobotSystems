@@ -59,7 +59,7 @@ class Tracker():
         max_area = 0
         for i in self.color_range:
             if i in self.target_color:
-                frame_mask = cv2.inRange(frame_lab, self.color_range[self.detected_color][0], self.color_range[self.detected_color][1])  #perform bitwise operations on original image and mask
+                frame_mask = cv2.inRange(frame_lab, self.color_range[i][0], self.color_range[i][1])  #perform bitwise operations on original image and mask
                 opened = cv2.morphologyEx(frame_mask, cv2.MORPH_OPEN, np.ones((6, 6), np.uint8))  #opening operation
                 closed = cv2.morphologyEx(opened, cv2.MORPH_CLOSE, np.ones((6, 6), np.uint8))  #closing operation
                 contours = cv2.findContours(closed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)[-2]  #find the outline
