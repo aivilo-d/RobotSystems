@@ -11,7 +11,7 @@ from ArmIK.Transform import *
 
 class Tracker():
     
-    def __init__(self, camera, target_color, size = (640, 480)):
+    def __init__(self, camera, target_color = 'red', size = (640, 480)):
         self.target_color = target_color
         self.camera = camera
         self.size = size
@@ -82,7 +82,7 @@ class Tracker():
 if __name__ == '__main__':
     my_camera = Camera.Camera()
     my_camera.camera_open()
-    tracker = Tracker(my_camera, target_color)
+    tracker = Tracker(my_camera)
     while True:
         img = tracker.camera.frame
         if img is not None:
