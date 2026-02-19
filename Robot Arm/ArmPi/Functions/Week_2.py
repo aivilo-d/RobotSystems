@@ -71,9 +71,9 @@ class Tracker():
                         areaMaxContour_max = areaMaxContour 
                 return areaMaxContour_max, max_area
     
-    def find_block(self, img, areaMaxContour, area_max):
-        if area_max > 2500:  #the largest area was found
-            rect = cv2.minAreaRect(areaMaxContour)
+    def find_block(self, img, areaMaxContour_max, max_area):
+        if max_area > 2500:  #the largest area was found
+            rect = cv2.minAreaRect(areaMaxContour_max)
             box = np.int0(cv2.boxPoints(rect))
 
             roi = getROI(box) #get ROI region
@@ -90,8 +90,8 @@ class Tracker():
 
     def track(self, img):
         frame_lab = self.get_image(img)
-        areaMaxContour, area_max = self.find_contours(frame_lab)
-        img = self.find_block(img, areaMaxContour, area_max)
+        areaMaxContour_max, max_area = self.find_contours(frame_lab)
+        img = self.find_block(img, areaMaxContour_max, max_area)
         return img
 
 if __name__ == '__main__':
