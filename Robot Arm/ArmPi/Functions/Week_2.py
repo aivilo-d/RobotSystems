@@ -24,6 +24,13 @@ class Tracker():
         'black': [(0, 0, 0), (56, 255, 255)], 
         'white': [(193, 0, 0), (255, 250, 255)], 
         }
+        self.range_rgb = {
+        'red': (0, 0, 255),
+        'blue': (255, 0, 0),
+        'green': (0, 255, 0),
+        'black': (0, 0, 0),
+        'white': (255, 255, 255),
+        }
 
     def getAreaMaxContour(self, contours):
         contour_area_temp = 0
@@ -72,9 +79,9 @@ class Tracker():
             world_x, world_y = convertCoordinate(img_centerx, img_centery, self.size) #convert to real world coordinates
             
             
-            cv2.drawContours(img, [box], -1, self.color_range[self.detected_color], 2)
+            cv2.drawContours(img, [box], -1, self.range_rgb[self.detected_color], 2)
             cv2.putText(img, '(' + str(world_x) + ',' + str(world_y) + ')', (min(box[0, 0], box[2, 0]), box[2, 1] - 10),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, self.color_range[self.detected_color], 1) #draw the center point
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, self.range_rgb[self.detected_color], 1) #draw the center point
         return img
 
     def track(self, img):
