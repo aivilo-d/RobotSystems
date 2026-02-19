@@ -48,6 +48,8 @@ class Tracker():
         return frame_lab
 
     def find_contours(self, frame_lab):
+        areaMaxContour = 0
+        area_max = 0
         for i in self.color_range:
             if i in self.target_color:
                 self.detected_color = i
@@ -58,7 +60,7 @@ class Tracker():
                 areaMaxContour, area_max = self.getAreaMaxContour(contours) 
                 return areaMaxContour, area_max
     
-    def find_block(self, areaMaxContour, area_max):
+    def find_block(self, img, areaMaxContour, area_max):
         if area_max > 2500:  #the largest area was found
             rect = cv2.minAreaRect(areaMaxContour)
             box = np.int0(cv2.boxPoints(rect))
@@ -73,11 +75,13 @@ class Tracker():
             cv2.drawContours(img, [box], -1, self.color_range[self.detected_color], 2)
             cv2.putText(img, '(' + str(world_x) + ',' + str(world_y) + ')', (min(box[0, 0], box[2, 0]), box[2, 1] - 10),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, self.color_range[self.detected_color], 1) #draw the center point
+        return img
 
     def track(self, img):
         frame_lab = self.get_image(img)
         areaMaxContour, area_max = self.find_contours(frame_lab)
-        self.find_block(areaMaxContour, area_max)
+        img = self.find_block(img, areaMaxContour, area_max)
+        return img
 
 if __name__ == '__main__':
     my_camera = Camera.Camera()
