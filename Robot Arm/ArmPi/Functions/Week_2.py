@@ -67,7 +67,7 @@ class Tracker():
                 if areaMaxContour is not None:
                     if area_max > max_area:#找最大面积 find the largest area
                         max_area = area_max
-                        self. detected_color = i
+                        self.detected_color = i
                         areaMaxContour_max = areaMaxContour 
                 return areaMaxContour_max, max_area
     
