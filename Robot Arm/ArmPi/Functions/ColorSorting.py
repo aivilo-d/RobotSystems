@@ -160,9 +160,9 @@ def move():
     }
     while True:
         if __isRunning:        
-            if detect_color != 'None' and start_pick_up:  #如果检测到方块没有移动一段时间后，开始夹取
-                #移到目标位置，高度6cm, 通过返回的结果判断是否能到达指定位置
-                #如果不给出运行时间参数，则自动计算，并通过结果返回
+            if detect_color != 'None' and start_pick_up:  #If the block hasn't moved for a certain period, start clamping.
+#Move to the target position, height 6cm. Determine if the target position can be reached based on the returned result.
+#If no runtime parameter is given, it will be calculated automatically and the result will be returned.
                 set_rgb(detect_color)
                 setBuzzer(0.1)
                 result = AK.setPitchRangeMoving((world_X, world_Y, 7), -90, -90, 0)  
@@ -170,12 +170,12 @@ def move():
                     unreachable = True
                 else:
                     unreachable = False
-                    time.sleep(result[2]/1000) #如果可以到达指定位置，则获取运行时间
+                    time.sleep(result[2]/1000) #If the specified location can be reached, obtain the running time.
 
                     if not __isRunning:
                         continue
-                    servo2_angle = getAngle(world_X, world_Y, rotation_angle) #计算夹持器需要旋转的角度
-                    Board.setBusServoPulse(1, servo1 - 280, 500)  # 爪子张开
+                    servo2_angle = getAngle(world_X, world_Y, rotation_angle) #Calculate the angle that the gripper needs to rotate.
+                    Board.setBusServoPulse(1, servo1 - 280, 500)  # claws open
                     Board.setBusServoPulse(2, servo2_angle, 500)
                     time.sleep(0.5)
                     
@@ -186,13 +186,13 @@ def move():
 
                     if not __isRunning:
                         continue
-                    Board.setBusServoPulse(1, servo1, 500)  #夹持器闭合
+                    Board.setBusServoPulse(1, servo1, 500)  #Clamp closing
                     time.sleep(0.8)
 
                     if not __isRunning:
                         continue
                     Board.setBusServoPulse(2, 500, 500)
-                    AK.setPitchRangeMoving((world_X, world_Y, 12), -90, -90, 0, 1000)  #机械臂抬起
+                    AK.setPitchRangeMoving((world_X, world_Y, 12), -90, -90, 0, 1000)  #Robotic arm raised
                     time.sleep(1)
 
                     if not __isRunning:
@@ -218,7 +218,7 @@ def move():
 
                     if not __isRunning:
                         continue
-                    Board.setBusServoPulse(1, servo1 - 200, 500)  # 爪子张开  ，放下物体
+                    Board.setBusServoPulse(1, servo1 - 200, 500)  # The claws open, and the object is placed down.
                     time.sleep(0.8)
 
                     if not __isRunning:
@@ -226,7 +226,7 @@ def move():
                     AK.setPitchRangeMoving((coordinate[detect_color][0], coordinate[detect_color][1], 12), -90, -90, 0, 800)
                     time.sleep(0.8)
 
-                    initMove()  # 回到初始位置
+                    initMove()  # Return to initial position
                     time.sleep(1.5)
 
                     detect_color = 'None'
