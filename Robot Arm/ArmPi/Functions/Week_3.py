@@ -74,6 +74,8 @@ class Tracker():
         return areaMaxContour_max, max_area
     
     def find_block(self, img, areaMaxContour_max, max_area):
+        world_x = None
+        world_y = None
         if max_area > 2500:  #the largest area was found
             rect = cv2.minAreaRect(areaMaxContour_max)
             box = np.int0(cv2.boxPoints(rect))
