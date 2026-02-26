@@ -68,7 +68,7 @@ class Tracker():
                         max_area = area_max
                         self.detected_color = i
                         areaMaxContour_max = areaMaxContour 
-                return areaMaxContour_max, max_area
+        return areaMaxContour_max, max_area
     
     def find_block(self, img, areaMaxContour_max, max_area):
         if max_area > 2500:  #the largest area was found
