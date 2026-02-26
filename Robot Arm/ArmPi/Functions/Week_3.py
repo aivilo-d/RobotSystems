@@ -9,8 +9,6 @@ import math
 import numpy as np
 from ArmIK.Transform import *
 
-AK = ArmIK()
-
 class Tracker():
     
     def __init__(self, camera, target_color = ('red', 'green', 'blue'), size = (640, 480)):
@@ -96,11 +94,12 @@ class Tracker():
         frame_lab = self.get_image(img)
         areaMaxContour_max, max_area = self.find_contours(frame_lab)
         img, world_x, world_y = self.find_block(img, areaMaxContour_max, max_area)
-        return img, world_x, world_y
+        return img, world_x, world_y, self.detected_color
 
 class Mover():
 
-    def __init__(self):
+    def __init__(self, AK):
+        self.AK = AK
         self.coordinate = {
             'red':   (-15 + 0.5, 12 - 0.5, 1.5),
             'green': (-15 + 0.5, 6 - 0.5,  1.5),
@@ -114,7 +113,7 @@ class Mover():
     def initMove(self):
         Board.setBusServoPulse(1, self.servo1 - 50, 300)
         Board.setBusServoPulse(2, 500, 500)
-        AK.setPitchRangeMoving((0, 10, 10), -30, -30, -90, 1500)
+        self.AK.setPitchRangeMoving((0, 10, 10), -30, -30, -90, 1500)
 
     def setBuzzer(timer):
         Board.setBuzzer(0)
@@ -126,7 +125,7 @@ class Mover():
         self.detect_color = detect_color      
         if self.detect_color != 'None':
             self.setBuzzer(0.1)
-            result = AK.setPitchRangeMoving((world_X, world_Y, 7), -90, -90, 0)  
+            result = self.AK.setPitchRangeMoving((world_X, world_Y, 7), -90, -90, 0)  
             if result == False:
                 return False
             else:
@@ -137,33 +136,33 @@ class Mover():
                 Board.setBusServoPulse(2, servo2_angle, 500)
                 time.sleep(0.5)
                     
-                AK.setPitchRangeMoving((world_X, world_Y, 1.5), -90, -90, 0, 1000)
+                self.AK.setPitchRangeMoving((world_X, world_Y, 1.5), -90, -90, 0, 1000)
                 time.sleep(1.5)
 
                 Board.setBusServoPulse(1, self.servo1, 500)  #Clamp closing
                 time.sleep(0.8)
 
                 Board.setBusServoPulse(2, 500, 500)
-                AK.setPitchRangeMoving((world_X, world_Y, 12), -90, -90, 0, 1000)  #Robotic arm raised
+                self.AK.setPitchRangeMoving((world_X, world_Y, 12), -90, -90, 0, 1000)  #Robotic arm raised
                 time.sleep(1)
 
-                result = AK.setPitchRangeMoving((self.coordinate[detect_color][0], self.coordinate[detect_color][1], 12), -90, -90, 0)   
+                result = self.AK.setPitchRangeMoving((self.coordinate[detect_color][0], self.coordinate[detect_color][1], 12), -90, -90, 0)   
                 time.sleep(result[2]/1000)
                                      
                 servo2_angle = getAngle(self.coordinate[detect_color][0], self.coordinate[detect_color][1], -90)
                 Board.setBusServoPulse(2, servo2_angle, 500)
                 time.sleep(0.5)
 
-                AK.setPitchRangeMoving((self.coordinate[detect_color][0], self.coordinate[detect_color][1], self.coordinate[detect_color][2] + 3), -90, -90, 0, 500)
+                self.AK.setPitchRangeMoving((self.coordinate[detect_color][0], self.coordinate[detect_color][1], self.coordinate[detect_color][2] + 3), -90, -90, 0, 500)
                 time.sleep(0.5)
                                       
-                AK.setPitchRangeMoving((self.coordinate[detect_color]), -90, -90, 0, 1000)
+                self.AK.setPitchRangeMoving((self.coordinate[detect_color]), -90, -90, 0, 1000)
                 time.sleep(0.8)
 
                 Board.setBusServoPulse(1, self.servo1 - 200, 500)  # The claws open, and the object is placed down.
                 time.sleep(0.8)
 
-                AK.setPitchRangeMoving((self.coordinate[detect_color][0], self.coordinate[detect_color][1], 12), -90, -90, 0, 800)
+                self.AK.setPitchRangeMoving((self.coordinate[detect_color][0], self.coordinate[detect_color][1], 12), -90, -90, 0, 800)
                 time.sleep(0.8)
 
                 self.initMove()  # Return to initial position
@@ -184,7 +183,7 @@ class Mover():
                 #move_square = True
                 time.sleep(3)
                 #move_square = False
-            result = AK.setPitchRangeMoving((world_X, world_Y, 7), -90, -90, 0)  # 移到目标位置，高度5cm
+            result = self.AK.setPitchRangeMoving((world_X, world_Y, 7), -90, -90, 0)  # 移到目标位置，高度5cm
             if result == False:
                 return False
             else:
@@ -196,33 +195,33 @@ class Mover():
                 Board.setBusServoPulse(2, servo2_angle, 500)
                 time.sleep(0.5)
 
-                AK.setPitchRangeMoving((world_X, world_Y, 2), -90, -90, 0, 1000)  # 降低高度到2cm
+                self.AK.setPitchRangeMoving((world_X, world_Y, 2), -90, -90, 0, 1000)  # 降低高度到2cm
                 time.sleep(1.5)
 
                 Board.setBusServoPulse(1, self.servo1, 500)  # 夹持器闭合
                 time.sleep(0.8)
 
                 Board.setBusServoPulse(2, 500, 500)
-                AK.setPitchRangeMoving((world_X, world_Y, 12), -90, -90, 0, 1000)  # 机械臂抬起
+                self.AK.setPitchRangeMoving((world_X, world_Y, 12), -90, -90, 0, 1000)  # 机械臂抬起
                 time.sleep(1)
 
-                AK.setPitchRangeMoving((self.coordinate[detect_color][0], self.coordinate[detect_color][1], 12), -90, -90, 0, 1500) 
+                self.AK.setPitchRangeMoving((self.coordinate[detect_color][0], self.coordinate[detect_color][1], 12), -90, -90, 0, 1500) 
                 time.sleep(1.5)
                                      
                 servo2_angle = getAngle(self.coordinate[detect_color][0], self.coordinate[detect_color][1], -90)
                 Board.setBusServoPulse(2, servo2_angle, 500)
                 time.sleep(0.5)
 
-                AK.setPitchRangeMoving((self.coordinate[detect_color][0], self.coordinate[detect_color][1], z + 3), -90, -90, 0, 500)
+                self.AK.setPitchRangeMoving((self.coordinate[detect_color][0], self.coordinate[detect_color][1], z + 3), -90, -90, 0, 500)
                 time.sleep(0.5)
                                  
-                AK.setPitchRangeMoving((self.coordinate[detect_color][0], self.coordinate[detect_color][1], z), -90, -90, 0, 1000)
+                self.AK.setPitchRangeMoving((self.coordinate[detect_color][0], self.coordinate[detect_color][1], z), -90, -90, 0, 1000)
                 time.sleep(0.8)
 
                 Board.setBusServoPulse(1, self.servo1 - 200, 500)  # 爪子张开  ，放下物体
                 time.sleep(1)
 
-                AK.setPitchRangeMoving((self.coordinate[detect_color][0], self.coordinate[detect_color][1], 12), -90, -90, 0, 800)
+                self.AK.setPitchRangeMoving((self.coordinate[detect_color][0], self.coordinate[detect_color][1], 12), -90, -90, 0, 800)
                 time.sleep(0.8)
 
                 self.initMove()  # 回到初始位置
@@ -234,12 +233,15 @@ if __name__ == '__main__':
     my_camera = Camera.Camera()
     my_camera.camera_open()
     tracker = Tracker(my_camera)
+    AK = ArmIK()
+    mover = Mover(AK)
     while True:
         img = tracker.camera.frame
         if img is not None:
             frame = img.copy()
-            Frame, world_x, world_y = tracker.track(frame)           
+            Frame, world_x, world_y, detected_color = tracker.track(frame)           
             cv2.imshow('Frame', Frame)
+            mover.sort(world_x, world_y, detected_color)
             key = cv2.waitKey(1)
             if key == 27:
                 break
