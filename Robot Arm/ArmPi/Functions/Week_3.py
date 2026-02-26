@@ -115,7 +115,7 @@ class Mover():
         Board.setBusServoPulse(2, 500, 500)
         self.AK.setPitchRangeMoving((0, 10, 10), -30, -30, -90, 1500)
 
-    def setBuzzer(timer):
+    def Buzzer(timer):
         Board.setBuzzer(0)
         Board.setBuzzer(1)
         time.sleep(timer)
@@ -124,7 +124,7 @@ class Mover():
     def sort(self, world_X, world_Y, detect_color):  
         self.detect_color = detect_color      
         if self.detect_color != 'None':
-            self.setBuzzer(0.1)
+            self.Buzzer(0.1)
             result = self.AK.setPitchRangeMoving((world_X, world_Y, 7), -90, -90, 0)  
             if result == False:
                 return False
