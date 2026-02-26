@@ -238,7 +238,7 @@ if __name__ == '__main__':
         img = tracker.camera.frame
         if img is not None:
             frame = img.copy()
-            Frame = tracker.track(frame)           
+            Frame, world_x, world_y = tracker.track(frame)           
             cv2.imshow('Frame', Frame)
             key = cv2.waitKey(1)
             if key == 27:
