@@ -115,7 +115,7 @@ class Mover():
         Board.setBusServoPulse(2, 500, 500)
         self.AK.setPitchRangeMoving((0, 10, 10), -30, -30, -90, 1500)
 
-    def Buzzer(timer):
+    def Buzzer(self, timer):
         Board.setBuzzer(0)
         Board.setBuzzer(1)
         time.sleep(timer)
